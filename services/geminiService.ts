@@ -1,14 +1,19 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { CloudRunService, GeminiAnalysis } from '../types';
 
-if (!process.env.API_KEY) {
-  // In a real app, you'd want to handle this more gracefully.
-  // For this example, we'll alert the user and prevent API calls.
-  alert("API_KEY environment variable not set. Gemini features will be disabled.");
-}
+// Lazily initialize to avoid errors on module load if API key is missing.
+let ai: GoogleGenAI | null = null;
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const getAiClient = (): GoogleGenAI => {
+  if (!process.env.API_KEY) {
+    throw new Error("API_KEY environment variable not set. Please configure it to use Gemini features.");
+  }
+  if (!ai) {
+    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  }
+  return ai;
+};
+
 
 export const analyzeServiceHealth = async (service: CloudRunService): Promise<GeminiAnalysis> => {
   const prompt = `
@@ -26,8 +31,8 @@ export const analyzeServiceHealth = async (service: CloudRunService): Promise<Ge
     The summary should be a single paragraph.
     The recommendations should be a list of 2-3 specific, actionable steps to improve the service's health or performance.
   `;
-
-  const response = await ai.models.generateContent({
+  const client = getAiClient();
+  const response = await client.models.generateContent({
     model: "gemini-2.5-flash",
     contents: prompt,
     config: {
@@ -57,7 +62,8 @@ export const analyzeServiceHealth = async (service: CloudRunService): Promise<Ge
 };
 
 export const generateGcloudCommand = async (prompt: string): Promise<string> => {
-  const response = await ai.models.generateContent({
+  const client = getAiClient();
+  const response = await client.models.generateContent({
     model: "gemini-2.5-flash",
     contents: prompt,
     config: {
