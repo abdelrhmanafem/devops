@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { CloudRunService } from './types';
 import { fetchCloudRunServices } from './services/gcpService';
@@ -6,6 +5,7 @@ import { Header } from './components/Header';
 import { ServiceCard } from './components/ServiceCard';
 import { ServiceDetailModal } from './components/ServiceDetailModal';
 import { GcloudHelper } from './components/GcloudHelper';
+import { Instructions } from './components/Instructions';
 
 const App: React.FC = () => {
   const [services, setServices] = useState<CloudRunService[]>([]);
@@ -45,6 +45,9 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-gray-900">
       <Header />
       <main className="container mx-auto p-4 sm:p-8">
+        <div className="mb-8">
+          <Instructions />
+        </div>
         <div className="mb-8">
             <GcloudHelper />
         </div>
