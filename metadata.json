@@ -1,0 +1,5 @@
+{
+  "name": "GCP DevOps Assistant",
+  "description": "A dashboard to manage your Google Cloud Run services and get AI-powered assistance for common DevOps tasks. View service status, analyze performance with Gemini, and generate gcloud commands from natural language.",
+  "requestFramePermissions": []
+}
